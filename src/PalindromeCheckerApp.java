@@ -1,55 +1,73 @@
-// UseCase11PalindromeCheckerApp.java
+// UseCase13PalindromeCheckerApp.java
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Stack;
 
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        // Original string
-        String input = "Deed";
+        String testString = "A man a plan a canal Panama";
 
-        // Create instance of PalindromeChecker service
-        PalindromeChecker checker = new PalindromeChecker();
+        // Normalize string
+        String normalized = testString.replaceAll("\\s+", "").toLowerCase();
 
-        boolean isPalindrome = checker.checkPalindrome(input);
+        // Run and time Stack-based approach
+        long startStack = System.nanoTime();
+        boolean resultStack = stackPalindrome(normalized);
+        long endStack = System.nanoTime();
+        long durationStack = endStack - startStack;
 
-        if (isPalindrome) {
-            System.out.println("The string \"" + input + "\" is a Palindrome.");
-        } else {
-            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
-        }
+        // Run and time Deque-based approach
+        long startDeque = System.nanoTime();
+        boolean resultDeque = dequePalindrome(normalized);
+        long endDeque = System.nanoTime();
+        long durationDeque = endDeque - startDeque;
+
+        // Run and time Two-pointer approach
+        long startTwoPointer = System.nanoTime();
+        boolean resultTwoPointer = twoPointerPalindrome(normalized);
+        long endTwoPointer = System.nanoTime();
+        long durationTwoPointer = endTwoPointer - startTwoPointer;
+
+        // Display results
+        System.out.println("Palindrome Performance Comparison for: \"" + testString + "\"");
+        System.out.println("---------------------------------------------------------");
+        System.out.println("Stack-based: " + resultStack + " | Time: " + durationStack + " ns");
+        System.out.println("Deque-based: " + resultDeque + " | Time: " + durationDeque + " ns");
+        System.out.println("Two-pointer: " + resultTwoPointer + " | Time: " + durationTwoPointer + " ns");
     }
-}
 
-// Service class encapsulating palindrome logic
-class PalindromeChecker {
-
-    // Public method to check palindrome
-    public boolean checkPalindrome(String str) {
-
-        if (str == null || str.isEmpty()) {
-            return true; // Empty string is considered palindrome
-        }
-
-        // Normalize string: ignore case
-        String normalized = str.toLowerCase();
-
-        // Use Stack internally
+    // Stack-based palindrome
+    public static boolean stackPalindrome(String str) {
         Stack<Character> stack = new Stack<>();
-
-        // Push all characters to stack
-        for (int i = 0; i < normalized.length(); i++) {
-            stack.push(normalized.charAt(i));
+        for (char c : str.toCharArray()) stack.push(c);
+        for (char c : str.toCharArray()) {
+            if (c != stack.pop()) return false;
         }
+        return true;
+    }
 
-        // Pop and compare
-        for (int i = 0; i < normalized.length(); i++) {
-            if (normalized.charAt(i) != stack.pop()) {
-                return false;
-            }
+    // Deque-based palindrome
+    public static boolean dequePalindrome(String str) {
+        Deque<Character> deque = new LinkedList<>();
+        for (char c : str.toCharArray()) deque.addLast(c);
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) return false;
         }
+        return true;
+    }
 
+    // Two-pointer palindrome
+    public static boolean twoPointerPalindrome(String str) {
+        int start = 0;
+        int end = str.length() - 1;
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) return false;
+            start++;
+            end--;
+        }
         return true;
     }
 }

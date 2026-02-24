@@ -1,34 +1,40 @@
-// UseCase9PalindromeCheckerApp.java
+// UseCase10PalindromeCheckerApp.java
 
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        String original = "madam";
+        String original = "A man a plan a canal Panama";
 
-        boolean isPalindrome = checkPalindrome(original, 0, original.length() - 1);
+        // Step 1: Normalize string
+        String normalized = original.replaceAll("\\s+", "").toLowerCase();
 
+        // Step 2: Apply two-pointer palindrome logic
+        boolean isPalindrome = checkPalindrome(normalized);
+
+        // Step 3: Print result
         if (isPalindrome) {
-            System.out.println("The string \"" + original + "\" is a Palindrome.");
+            System.out.println("The string \"" + original + "\" is a Palindrome (ignoring case and spaces).");
         } else {
             System.out.println("The string \"" + original + "\" is NOT a Palindrome.");
         }
     }
 
-    // Recursive method
-    public static boolean checkPalindrome(String str, int start, int end) {
+    public static boolean checkPalindrome(String str) {
 
-        // Base condition: If pointers cross or meet
-        if (start >= end) {
-            return true;
+        int start = 0;
+        int end = str.length() - 1;
+
+        while (start < end) {
+
+            if (str.charAt(start) != str.charAt(end)) {
+                return false;
+            }
+
+            start++;
+            end--;
         }
 
-        // If characters don't match
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
-        }
-
-        // Recursive call for inner substring
-        return checkPalindrome(str, start + 1, end - 1);
+        return true;
     }
 }

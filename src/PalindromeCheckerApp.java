@@ -1,6 +1,6 @@
 // PalindromeChecker.java
 
-public class PalindromeChecker {
+public class PalindromeCheckerApp {
 
     // Application constants
     private static final String APP_NAME = "Palindrome Checker App";

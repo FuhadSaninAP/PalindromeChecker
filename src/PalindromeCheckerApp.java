@@ -1,55 +1,95 @@
-// UseCase11PalindromeCheckerApp.java
+// UseCase12PalindromeCheckerApp.java
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Stack;
 
-public class PalindromeCheckerApp {
-
-    public static void main(String[] args) {
-
-        // Original string
-        String input = "Deed";
-
-        // Create instance of PalindromeChecker service
-        PalindromeChecker checker = new PalindromeChecker();
-
-        boolean isPalindrome = checker.checkPalindrome(input);
-
-        if (isPalindrome) {
-            System.out.println("The string \"" + input + "\" is a Palindrome.");
-        } else {
-            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
-        }
-    }
+// Strategy Interface
+interface PalindromeStrategy {
+    boolean isPalindrome(String str);
 }
 
-// Service class encapsulating palindrome logic
-class PalindromeChecker {
+// Stack-based implementation
+class StackStrategy implements PalindromeStrategy {
 
-    // Public method to check palindrome
-    public boolean checkPalindrome(String str) {
+    @Override
+    public boolean isPalindrome(String str) {
 
-        if (str == null || str.isEmpty()) {
-            return true; // Empty string is considered palindrome
-        }
+        if (str == null || str.isEmpty()) return true;
 
-        // Normalize string: ignore case
-        String normalized = str.toLowerCase();
-
-        // Use Stack internally
+        String normalized = str.toLowerCase().replaceAll("\\s+", "");
         Stack<Character> stack = new Stack<>();
 
-        // Push all characters to stack
-        for (int i = 0; i < normalized.length(); i++) {
-            stack.push(normalized.charAt(i));
+        for (char c : normalized.toCharArray()) {
+            stack.push(c);
         }
 
-        // Pop and compare
-        for (int i = 0; i < normalized.length(); i++) {
-            if (normalized.charAt(i) != stack.pop()) {
+        for (char c : normalized.toCharArray()) {
+            if (c != stack.pop()) {
                 return false;
             }
         }
 
         return true;
+    }
+}
+
+// Deque-based implementation
+class DequeStrategy implements PalindromeStrategy {
+
+    @Override
+    public boolean isPalindrome(String str) {
+
+        if (str == null || str.isEmpty()) return true;
+
+        String normalized = str.toLowerCase().replaceAll("\\s+", "");
+        Deque<Character> deque = new LinkedList<>();
+
+        for (char c : normalized.toCharArray()) {
+            deque.addLast(c);
+        }
+
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+// Context Class
+class PalindromeContext {
+
+    private PalindromeStrategy strategy;
+
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeStrategy(String str) {
+        return strategy.isPalindrome(str);
+    }
+}
+
+// Main Application
+public class PalindromeCheckerApp {
+
+    public static void main(String[] args) {
+
+        String input = "Able was I ere I saw Elba";
+
+        PalindromeContext context = new PalindromeContext();
+
+        // Choose Stack Strategy dynamically
+        context.setStrategy(new StackStrategy());
+        boolean resultStack = context.executeStrategy(input);
+        System.out.println("Stack Strategy: \"" + input + "\" → " + (resultStack ? "Palindrome" : "Not Palindrome"));
+
+        // Choose Deque Strategy dynamically
+        context.setStrategy(new DequeStrategy());
+        boolean resultDeque = context.executeStrategy(input);
+        System.out.println("Deque Strategy: \"" + input + "\" → " + (resultDeque ? "Palindrome" : "Not Palindrome"));
     }
 }

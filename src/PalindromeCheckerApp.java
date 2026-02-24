@@ -1,38 +1,53 @@
-// UseCase10PalindromeCheckerApp.java
+// UseCase11PalindromeCheckerApp.java
+
+import java.util.Stack;
 
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        String original = "A man a plan a canal Panama";
+        // Original string
+        String input = "Deed";
 
-        // Step 1: Normalize string
-        String normalized = original.replaceAll("\\s+", "").toLowerCase();
+        // Create instance of PalindromeChecker service
+        PalindromeChecker checker = new PalindromeChecker();
 
-        // Step 2: Apply two-pointer palindrome logic
-        boolean isPalindrome = checkPalindrome(normalized);
+        boolean isPalindrome = checker.checkPalindrome(input);
 
-        // Step 3: Print result
         if (isPalindrome) {
-            System.out.println("The string \"" + original + "\" is a Palindrome (ignoring case and spaces).");
+            System.out.println("The string \"" + input + "\" is a Palindrome.");
         } else {
-            System.out.println("The string \"" + original + "\" is NOT a Palindrome.");
+            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
         }
     }
+}
 
-    public static boolean checkPalindrome(String str) {
+// Service class encapsulating palindrome logic
+class PalindromeChecker {
 
-        int start = 0;
-        int end = str.length() - 1;
+    // Public method to check palindrome
+    public boolean checkPalindrome(String str) {
 
-        while (start < end) {
+        if (str == null || str.isEmpty()) {
+            return true; // Empty string is considered palindrome
+        }
 
-            if (str.charAt(start) != str.charAt(end)) {
+        // Normalize string: ignore case
+        String normalized = str.toLowerCase();
+
+        // Use Stack internally
+        Stack<Character> stack = new Stack<>();
+
+        // Push all characters to stack
+        for (int i = 0; i < normalized.length(); i++) {
+            stack.push(normalized.charAt(i));
+        }
+
+        // Pop and compare
+        for (int i = 0; i < normalized.length(); i++) {
+            if (normalized.charAt(i) != stack.pop()) {
                 return false;
             }
-
-            start++;
-            end--;
         }
 
         return true;
